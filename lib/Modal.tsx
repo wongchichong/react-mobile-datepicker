@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+import { Modal as StyledModal } from './styles';
+
 interface Props {
   children: React.ReactNode,
   isOpen: boolean,
@@ -12,9 +14,9 @@ const Modal: React.FC<Props> = ({ isOpen = false, children }) => {
     return null;
   }
   return ReactDOM.createPortal(
-    <div className='Modal-Portal'>
+    <StyledModal className='Modal-Portal'>
       {children}
-    </div>,
+    </StyledModal>,
     root,
   );
 };

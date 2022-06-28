@@ -19,24 +19,13 @@ module.exports = {
     host: '0.0.0.0',
   },
   resolve: {
-    extensions: ['.json', '.js', '.jsx', '.ts', '.tsx', '.css'],
+    extensions: ['.json', '.js', '.jsx', '.ts', '.tsx'],
   },
   module: {
     rules: [
       {
         test: /\.tsx?$/,
         loader: 'babel-loader',
-      },
-      {
-        test: /\.css$/,
-        use: [
-          {loader: 'style-loader'},
-          {loader: 'css-loader'},
-          {
-          loader: 'postcss-loader',
-          options: {config: {path: path.join(__dirname, 'postcss.config.js')}},
-          },
-        ],
       },
     ],
   },

@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 
 import { DateConfig, dateConfigMap } from './dataSource';
 import DatePickerItem from './DatePickerItem';
+import { Root } from './styles';
 import { convertDate, nextDate, Unit } from './time';
 
 export interface DatePickerProps {
@@ -128,7 +129,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   const dataConfigList = normalizeDateConfig(dateConfig);
 
   return (
-    <div
+    <Root
       className={`datepicker ${themeClassName}`}>
       {showHeader && (
         <div className='datepicker-header'>
@@ -163,7 +164,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
           className='datepicker-navbar-btn'
           onClick={onCancel}>{cancelText}</button>
       </div>}
-    </div>
+    </Root>
   );
 };
 

@@ -1,7 +1,6 @@
-import './main.css';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import '../../lib/index.css';
+import { App as StyledApp } from './styles';
 import DatePicker from '../../lib';
 
 const App = () => {
@@ -23,7 +22,7 @@ const App = () => {
   }
 
   return (
-    <div className="App">
+    <StyledApp className="App">
       <p className="select-time ">
         {time.toLocaleDateString()}
       </p>
@@ -81,7 +80,7 @@ const App = () => {
         onSelect={handleSelect}
         onCancel={() => handleToggle(false)}
       />
-    </div>
+    </StyledApp>
   );
 }
 
