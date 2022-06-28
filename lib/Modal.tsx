@@ -7,15 +7,15 @@ interface Props {
 }
 
 const Modal: React.FC<Props> = ({ isOpen = false, children }) => {
-  const root = React.useRef(document.body as HTMLElement);
-  if (!isOpen) {
+  const root = typeof window !== 'undefined' ? document.body as HTMLElement : null;
+  if (!isOpen || !root || !children) {
     return null;
   }
   return ReactDOM.createPortal(
     <div className='Modal-Portal'>
       {children}
     </div>,
-    root.current,
+    root,
   );
 };
 
