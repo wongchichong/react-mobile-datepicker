@@ -5,8 +5,8 @@
   "main": "./dist/react-mobile-datepicker.js",
   "amdName": "reactMobileDatePicker",
   "minified:main": "dist/react-mobile-datepicker.min.js",
-  "repository": "lanjingling0510/react-mobile-datepicker",
-  "homepage": "https://github.com/lanjingling0510/react-mobile-datepicker#readme",
+  "repository": "jin60641/react-mobile-datepicker",
+  "homepage": "https://github.com/jin60641/react-mobile-datepicker#readme",
   "keywords": [
     "react-component",
     "react-datepicker",
@@ -24,8 +24,6 @@
     "size": "size=$(gzip-size $npm_package_minified_main) && echo \"gzip size: $size\"",
     "start": "webpack-dev-server",
     "mocha": "./node_modules/.bin/mocha --compilers js:babel-core/register --require ./test/helper.js --recursive",
-    "test": "./node_modules/.bin/nyc npm run mocha",
-    "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
@@ -61,7 +59,6 @@
     "mocha": "2.3.3",
     "mocha-lcov-reporter": "^1.2.0",
     "npm-run-all": "^3.0.0",
-    "nyc": "^6.6.1",
     "postcss": "^6.0.13",
     "postcss-cssnext": "^3.0.2",
     "postcss-import": "^10.0.0",
@@ -87,5 +84,5 @@
     "react": ">=0.14",
     "react-dom": ">=0.14"
   },
-  "license": "ISC"
+  "license": "MIT"
 }
