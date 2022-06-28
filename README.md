@@ -42,38 +42,38 @@ react-mobile-datepicker provides a component that can set year, month, day, hour
 set `dateConfig` to configure year, month, day, hour, minute.
 
 ```javascript
-{
-    'year': {
-        format: 'YYYY',
-        caption: 'Year',
-        step: 1,
-    },
-    'month': {
-        format: 'MM',
-        caption: 'Mon',
-        step: 1,
-    },
-    'date': {
-        format: 'DD',
-        caption: 'Day',
-        step: 1,
-    },
-    'hour': {
-        format: 'hh',
-        caption: 'Hour',
-        step: 1,
-    },
-    'minute': {
-        format: 'mm',
-        caption: 'Min',
-        step: 1,
-    },
-    'second': {
-        format: 'hh',
-        caption: 'Sec',
-        step: 1,
-    },
-}
+[{
+  type: 'year',
+  format: 'YYYY',
+  caption: 'Year',
+  step: 1,
+}, {
+  type: 'month',
+  format: 'MM',
+  caption: 'Mon',
+  step: 1,
+}, {
+  type: 'date',
+  format: 'DD',
+  caption: 'Day',
+  step: 1,
+}, {
+  type: 'hour',
+  format: 'hh',
+  caption: 'Hour',
+  step: 1,
+}, {
+  type: 'minute',
+  format: 'mm',
+  caption: 'Min',
+  step: 1,
+},
+'second': {
+  type: 'second',
+  format: 'hh',
+  caption: 'Sec',
+  step: 1,
+}]
 ```
 
 <div style="padding:30px">
@@ -84,23 +84,22 @@ set `dateConfig` to configure year, month, day, hour, minute.
 set `dateConfig` to configure hour, minute and second.
 
 ```javascript
-{
-    'hour': {
-        format: 'hh',
-        caption: 'Hour',
-        step: 1,
-    },
-    'minute': {
-        format: 'mm',
-        caption: 'Min',
-        step: 1,
-    },
-    'second': {
-        format: 'hh',
-        caption: 'Sec',
-        step: 1,
-    },
-}
+[{
+  type: 'hour',
+  format: 'hh',
+  caption: 'Hour',
+  step: 1,
+}, {
+  type: 'minute',
+  format: 'mm',
+  caption: 'Min',
+  step: 1,
+}, {
+  type: 'second',
+  format: 'hh',
+  caption: 'Sec',
+  step: 1,
+}]
 ```
 
 <div style="padding:30px">
@@ -112,40 +111,39 @@ customize the content mapping shown in the month.
 ```javascript
 
 const monthMap = {
-	'1': 'Jan',
-	'2': 'Feb',
-	'3': 'Mar',
-	'4': 'Apr',
-	'5': 'May',
-	'6': 'Jun',
-	'7': 'Jul',
-	'8': 'Aug',
-	'9': 'Sep',
-	'10': 'Oct',
-	'11': 'Nov',
-	'12': 'Dec',
+  '1': 'Jan',
+  '2': 'Feb',
+  '3': 'Mar',
+  '4': 'Apr',
+  '5': 'May',
+  '6': 'Jun',
+  '7': 'Jul',
+  '8': 'Aug',
+  '9': 'Sep',
+  '10': 'Oct',
+  '11': 'Nov',
+  '12': 'Dec',
 };
 
-const dateConfig = {
-	'year': {
-		format: 'YYYY',
-		caption: 'Year',
-		step: 1,
-	},
-	'month': {
-		format: value => monthMap[value.getMonth() + 1],
-		caption: 'Mon',
-		step: 1,
-	},
-	'date': {
-		format: 'DD',
-		caption: 'Day',
-		step: 1,
-	},
-};
+const dateConfig = [{
+  type: 'year',
+  format: 'YYYY',
+  caption: 'Year',
+  step: 1,
+}, {
+  type: 'month',
+  format: value => monthMap[value.getMonth() + 1],
+  caption: 'Mon',
+  step: 1,
+}, {
+  type: 'date',
+  format: 'DD',
+  caption: 'Day',
+  step: 1,
+}];
 
 <DatePicker
-	dateConfig={dateConfig}
+  dateConfig={dateConfig}
 />
 
 ```
@@ -156,27 +154,26 @@ const dateConfig = {
 set `showCaption` to display date captions, matches the dateConfig property's caption.
 
 ```javascript
-const dateConfig = {
-    'hour': {
-        format: 'hh',
-        caption: 'Hour',
-        step: 1,
-    },
-    'minute': {
-        format: 'mm',
-        caption: 'Min',
-        step: 1,
-    },
-    'second': {
-        format: 'hh',
-        caption: 'Sec',
-        step: 1,
-    },
-}
+const dateConfig = [{
+  type: 'hour',
+  format: 'hh',
+  caption: 'Hour',
+  step: 1,
+}, {
+  type: 'minute',
+  format: 'mm',
+  caption: 'Min',
+  step: 1,
+},
+  type: 'second',
+  format: 'hh',
+  caption: 'Sec',
+  step: 1,
+}];
 
 <DatePicker
-	showCaption={true}
-	dateConfig={dateConfig}
+  showCaption={true}
+  dateConfig={dateConfig}
 />
 ```
 
@@ -191,7 +188,7 @@ const dateConfig = {
 
 Using [npm](https://www.npmjs.com/):
 
-	$ npm install react-mobile-datepicker --save
+  $ npm install react-mobile-datepicker --save
 
 ### Import what you need
 The following guide assumes you have some sort of ES2015 build set up using babel and/or webpack/browserify/gulp/grunt/etc.
@@ -210,40 +207,40 @@ import DatePicker from 'react-mobile-datepicker';
 
 ```javascript
 class App extends React.Component {
-	state = {
-		time: new Date(),
-		isOpen: false,
-	}
+  state = {
+    time: new Date(),
+    isOpen: false,
+  }
 
-	handleClick = () => {
-		this.setState({ isOpen: true });
-	}
+  handleClick = () => {
+    this.setState({ isOpen: true });
+  }
 
-	handleCancel = () => {
-		this.setState({ isOpen: false });
-	}
+  handleCancel = () => {
+    this.setState({ isOpen: false });
+  }
 
-	handleSelect = (time) => {
-		this.setState({ time, isOpen: false });
-	}
+  handleSelect = (time) => {
+    this.setState({ time, isOpen: false });
+  }
 
-	render() {
-		return (
-			<div className="App">
-				<a
-					className="select-btn"
-					onClick={this.handleClick}>
-					select time
-				</a>
+  render() {
+    return (
+      <div className="App">
+        <a
+          className="select-btn"
+          onClick={this.handleClick}>
+          select time
+        </a>
 
-				<DatePicker
-					value={this.state.time}
-					isOpen={this.state.isOpen}
-					onSelect={this.handleSelect}
-					onCancel={this.handleCancel} />
-			</div>
-		);
-	}
+        <DatePicker
+          value={this.state.time}
+          isOpen={this.state.isOpen}
+          onSelect={this.handleSelect}
+          onCancel={this.handleCancel} />
+      </div>
+    );
+  }
 }
 
 
@@ -280,43 +277,44 @@ ReactDOM.render(<App />, document.getElementById('react-box'));
 
 all default date configuration information, as follows
 
+- type: date unit
 - format: date unit display format
 - caption: date unit caption
 - step: date unit change interval
 
 ```javascript
-{
-    'year': {
-        format: 'YYYY',
-        caption: 'Year',
-        step: 1,
-    },
-    'month': {
-        format: 'M',
-        caption: 'Mon',
-        step: 1,
-    },
-    'date': {
-        format: 'D',
-        caption: 'Day',
-        step: 1,
-    },
-    'hour': {
-        format: 'hh',
-        caption: 'Hour',
-        step: 1,
-    },
-    'minute': {
-        format: 'mm',
-        caption: 'Min',
-        step: 1,
-    },
-    'second': {
-        format: 'hh',
-        caption: 'Sec',
-        step: 1,
-    },
-}
+[{
+  type: 'year',
+  format: 'YYYY',
+  caption: 'Year',
+  step: 1,
+}, {
+  type: 'month',
+  format: 'MM',
+  caption: 'Mon',
+  step: 1,
+}, {
+  type: 'date',
+  format: 'DD',
+  caption: 'Day',
+  step: 1,
+}, {
+  type: 'hour',
+  format: 'hh',
+  caption: 'Hour',
+  step: 1,
+}, {
+  type: 'minute',
+  format: 'mm',
+  caption: 'Min',
+  step: 1,
+},
+'second': {
+  type: 'second',
+  format: 'hh',
+  caption: 'Sec',
+  step: 1,
+}]
 
 ```
 
