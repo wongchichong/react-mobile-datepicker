@@ -1,8 +1,2 @@
 dist/*
 node_modules/*
-test/*
-stories/*
-postcss.config.js
-rollup.config.js
-examples/*
-coverage/*
