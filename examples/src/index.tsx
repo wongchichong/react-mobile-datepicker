@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { App as StyledApp } from './styles';
+import { Root, Time, Button } from './styles';
 import DatePicker from '../../lib';
 
 const App = () => {
@@ -22,36 +22,31 @@ const App = () => {
   }
 
   return (
-    <StyledApp className="App">
-      <p className="select-time ">
+    <Root>
+      <Time>
         {time.toLocaleDateString()}
-      </p>
+      </Time>
       <div>
-        <a
-          className="select-btn sm"
+        <Button
           onClick={() => handleThemeToggle('default')}>
           default
-        </a>
-        <a
-          className="select-btn sm"
+        </Button>
+        <Button
           onClick={() => handleThemeToggle('dark')}>
           dark
-        </a>
-        <a
-          className="select-btn sm"
+        </Button>
+        <Button
           onClick={() => handleThemeToggle('ios')}>
           ios
-        </a>
-        <a
-          className="select-btn sm"
+        </Button>
+        <Button
           onClick={() => handleThemeToggle('android')}>
           android
-        </a>
-        <a
-          className="select-btn sm"
+        </Button>
+        <Button
           onClick={() => handleThemeToggle('android-dark')}>
           android-dark
-        </a>
+        </Button>
       </div>
       <DatePicker
         value={time}
@@ -80,7 +75,7 @@ const App = () => {
         onSelect={handleSelect}
         onCancel={() => handleToggle(false)}
       />
-    </StyledApp>
+    </Root>
   );
 }
 

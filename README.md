@@ -1,13 +1,12 @@
-# react-mobile-datepicker
-[![Travis][build-badge]][build] [![npm package][npm-badge]][npm] [![Coveralls][coveralls-badge]][coveralls]
+# react-mobile-datepicker-typescript
+[![npm package][npm-badge]][npm]
 
+**a  lightweight react date picker for mobile, Not more than 20k**
 
-**a  lightweight react date picker for mobile, Not more than 4k**
-
-react-mobile-datepicker provides a component that can set year, month, day, hour, minute and second by sliding up or down.
+react-mobile-datepicker-typescript provides a component that can set year, month, day, hour, minute and second by sliding up or down.
 
 ## Features
-- is only 4k.
+- is only 20k.
 - It does not depend on moment.js
 
 ## Theme
@@ -39,7 +38,7 @@ react-mobile-datepicker provides a component that can set year, month, day, hour
 
 ## Custom date unit
 
-set `dateConfig` to configure year, month, day, hour, minute.
+set `dateConfig` to configure year, month, day, hour, minute and second.
 
 ```javascript
 [{
@@ -67,10 +66,9 @@ set `dateConfig` to configure year, month, day, hour, minute.
   format: 'mm',
   caption: 'Min',
   step: 1,
-},
-'second': {
+}, {
   type: 'second',
-  format: 'hh',
+  format: 'ss',
   caption: 'Sec',
   step: 1,
 }]
@@ -164,9 +162,9 @@ const dateConfig = [{
   format: 'mm',
   caption: 'Min',
   step: 1,
-},
+}, {
   type: 'second',
-  format: 'hh',
+  format: 'ss',
   caption: 'Sec',
   step: 1,
 }];
@@ -188,7 +186,7 @@ const dateConfig = [{
 
 Using [npm](https://www.npmjs.com/):
 
-  $ npm install react-mobile-datepicker --save
+  $ npm install react-mobile-datepicker-typescript --save
 
 ### Import what you need
 The following guide assumes you have some sort of ES2015 build set up using babel and/or webpack/browserify/gulp/grunt/etc.
@@ -206,45 +204,43 @@ import DatePicker from 'react-mobile-datepicker';
 
 
 ```javascript
-class App extends React.Component {
-  state = {
-    time: new Date(),
-    isOpen: false,
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import DatePicker from '../../lib';
+
+const App = () => {
+  const [time, setTime] = React.useState(new Date());
+  const [isOpen, setIsOpen] = React.useState(false);
+  const handleToggle = (nextIsOpen: typeof isOpen) => {
+    setIsOpen(nextIsOpen);
   }
 
-  handleClick = () => {
-    this.setState({ isOpen: true });
+  const handleSelect = (nextTime: typeof time) => {
+    setTime(nextTime);
+    setIsOpen(false);
   }
 
-  handleCancel = () => {
-    this.setState({ isOpen: false });
-  }
-
-  handleSelect = (time) => {
-    this.setState({ time, isOpen: false });
-  }
-
-  render() {
-    return (
-      <div className="App">
-        <a
-          className="select-btn"
-          onClick={this.handleClick}>
+  return (
+    <div>
+      <p>
+        {time.toLocaleDateString()}
+      </p>
+      <div>
+        <button onClick={() => handleToggle(true)}>
           select time
-        </a>
-
-        <DatePicker
-          value={this.state.time}
-          isOpen={this.state.isOpen}
-          onSelect={this.handleSelect}
-          onCancel={this.handleCancel} />
+        </button>
       </div>
-    );
-  }
+      <DatePicker
+        value={time}
+        isOpen={isOpen}
+        onSelect={handleSelect}
+        onCancel={() => handleToggle(false)}
+      />
+    </div>
+  );
 }
 
-
-ReactDOM.render(<App />, document.getElementById('react-box'));
+ReactDOM.render(<App />, document.getElementById('root'));
 ```
 
 
@@ -255,10 +251,7 @@ ReactDOM.render(<App />, document.getElementById('react-box'));
 | isPopup      | Boolean | true | whether  as popup add a overlay |
 | isOpen      | Boolean | false | whether to open datepicker |
 | theme      | String      | default  | theme of datepicker, include 'default', 'dark', 'ios', 'android', 'android-dark' |
-| ~~dateFormat~~(deprecated, use `dateConfig` instead) | Array     | ['YYYY', 'M', 'D'] | according to year, month, day, hour, minute, second format specified display text. E.g ['YYYY年', 'MM月', 'DD日']|
-| ~~dateSteps~~(deprecated), use `dateConfig` instead | Array | [1, 1, 1] | set step for each time unit |
 | dateConfig | Object | [See `DateConfig` format for details](#dateconfig) | configure date unit information |
-|~~showFormat~~(deprecated, use `headerFormat` instead) | String | 'YYYY/MM/DD' | customize the format of the display title |
 |headerFormat | String | 'YYYY/MM/DD' | customize the format of the display title |
 | value | Date | new Date() | date value |
 | min  | Date | new Date(1970, 0, 1) | minimum date |
@@ -266,8 +259,8 @@ ReactDOM.render(<App />, document.getElementById('react-box'));
 | showHeader | Boolean | true | whether to show the header |
 | showFooter | Boolean | true | whether to show the footer |
 | customHeader | ReactElement | undefined | customize the header, if you set this property, it will replace `showFormat`|
-| confirmText  | String | 完成 | customize the selection time button text |
-| cancelText | String | 取消 | customize the cancel button text |
+| confirmText  | String | 'Done' | customize the selection time button text |
+| cancelText | String | 'Cancel' | customize the cancel button text |
 | onSelect | Function | () => {} | the callback function after click button of done, Date object as a parameter |
 | onCancel | Function | () => {} | the callback function after click button of cancel |
 | onChange | Function | () => {} | the callback function after date be changed |
@@ -325,17 +318,13 @@ all default date configuration information, as follows
 ## How to Contribute
 
 Anyone and everyone is welcome to contribute to this project. The best way to
-start is by checking our [open issues](https://github.com/lanjingling0510/react-mobile-datepicker/issues),
-[submit a new issues](https://github.com/lanjingling0510/react-mobile-datepicker/issues/new?labels=bug) or
-[feature request](https://github.com/lanjingling0510/react-mobile-datepicker/issues/new?labels=enhancement),
+start is by checking our [open issues](https://github.com/jin60641/react-mobile-datepicker-typescript/issues),
+[submit a new issues](https://github.com/jin60641/react-mobile-datepicker-typescript/issues/new?labels=bug) or
+[feature request](https://github.com/jin60641/react-mobile-datepicker-typescript/issues/new?labels=enhancement),
 participate in discussions, upvote or downvote the issues you like or dislike.
 
 
 
 
-[npm-badge]: https://img.shields.io/npm/v/react-mobile-datepicker.svg?style=flat-square
-[npm]: https://www.npmjs.com/package/react-mobile-datepicker
-[build-badge]: https://img.shields.io/travis/lanjingling0510/react-mobile-datepicker/master.svg?style=flat-square
-[build]: https://travis-ci.org/lanjingling0510/react-mobile-datepicker
-[coveralls-badge]: https://img.shields.io/coveralls/lanjingling0510/react-mobile-datepicker.svg?style=flat-square
-[coveralls]: https://coveralls.io/github/lanjingling0510/react-mobile-datepicker
+[npm-badge]: https://img.shields.io/npm/v/react-mobile-datepicker-typescript.svg?style=flat-square
+[npm]: https://www.npmjs.com/package/react-mobile-datepicker-typescript
