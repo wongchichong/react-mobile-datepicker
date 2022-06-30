@@ -36,7 +36,7 @@ export function formatCss(props: { [key: string]: string }) {
  * @param {Object} element 目标元素
  * @param {Object} props   css属性对象
  */
-export function addPrefixCss(element: HTMLElement, props: { [key: string]: string }) {
+export function addPrefixCss(element: HTMLUListElement, props: { [key: string]: string }) {
   const formatedProps = formatCss(props);
   Object.entries(formatedProps).forEach(([key, value]) => {
     element.style[key as any] = value;

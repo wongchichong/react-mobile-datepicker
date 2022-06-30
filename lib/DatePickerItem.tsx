@@ -1,20 +1,25 @@
-/**
- * @module Date组件
- */
-import React, { Component } from 'react';
+import React, {
+  FC, useCallback, useEffect, useRef, useState,
+} from 'react';
 
 import { addPrefixCss, formatCss } from './prefix';
 import { convertDate, nextMap, Unit } from './time';
 
-const DATEHEIGHT = 40;                // 每个日期的高度
-const DATELENGTH = 10;                // 日期的个数
-const MIDDLEINDEX = Math.floor(DATELENGTH / 2);   // 日期数组中间值的索引
-const MIDDLEY = - DATEHEIGHT * MIDDLEINDEX;     // translateY值
+const DATE_HEIGHT = 40;
+const DATE_LENGTH = 10;
+const MIDDLE_INDEX = Math.floor(DATE_LENGTH / 2);
+const MIDDLE_Y = - DATE_HEIGHT * MIDDLE_INDEX;
 
 const isUndefined = (val: any) => typeof val === 'undefined';
+
+const isTouchEvent = (e: any): e is React.TouchEvent<HTMLDivElement> => {
+  return !isUndefined(e.targetTouches) &&
+         !isUndefined(e.targetTouches[0]);
+};
+
 const isFunction = (val: any): val is Function => Object.prototype.toString.apply(val)  === '[object Function]';
 
-type Props = {
+interface Props {
   type: Unit,
   value: Date,
   min: Date,
@@ -22,310 +27,228 @@ type Props = {
   format: string | ((date: Date) => string),
   step: number,
   onSelect: Function,
-};
+}
 
-type State = {
-  translateY: number,
-  marginTop: number,
-  dates: any[],  
-};
+const iniDates = ({ step, type, value }: Pick<Props, 'step' | 'type' | 'value'>) => Array(...Array(DATE_LENGTH))
+  .map((date, index) =>
+    nextMap[type](value, (index - MIDDLE_INDEX) * step));
 
-class DatePickerItem extends Component<Props, State> {
-  animating: boolean;         // 判断是否在transition过渡动画之中
 
-  touchY: number;            // 保存touchstart的pageY
+const DatePickerItem: FC<Props> = ({
+  type,
+  value,
+  min,
+  max,
+  format,
+  step,
+  onSelect,
+}) => {
+  const scroll = useRef<HTMLUListElement | null>(null);
+  const [animating, setAnimating] = useState(false);
+  const touchY = useRef(0);
+  const translateY = useRef(0);
+  const currentIndex = useRef(MIDDLE_INDEX);
+  const moveDateCount = useRef(0);
+  const [mouseDown, setMouseDown] = useState(false);
+  const moveToTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const [stateTranslateY, setStateTranslateY] = useState(MIDDLE_Y);
+  const [dates, setDates] = useState(iniDates({ step, type, value }));
 
-  translateY: number;          // 容器偏移的距离
-
-  currentIndex: number;     // 滑动中当前日期的索引
-
-  moveDateCount: number;         // 一次滑动移动了多少个时间
-
-  moveToTimer: ReturnType<typeof setTimeout> | undefined;
-
-  viewport: Element | null = null;
-
-  constructor(props: Props) {
-    super(props);
-    this.animating = false;
-    this.touchY = 0;
-    this.translateY = 0;
-    this.currentIndex = MIDDLEINDEX;
-    this.moveToTimer = undefined;
-    this.moveDateCount = 0;
-
-    this.state = {
-      translateY: MIDDLEY,
-      dates: [],
-      marginTop: (this.currentIndex - MIDDLEINDEX) * DATEHEIGHT,
-    };
-
-    this.renderDatepickerItem = this.renderDatepickerItem.bind(this);
-    this.handleContentTouch = this.handleContentTouch.bind(this);
-    this.handleContentMouseDown = this.handleContentMouseDown.bind(this);
-    this.handleContentMouseMove = this.handleContentMouseMove.bind(this);
-    this.handleContentMouseUp = this.handleContentMouseUp.bind(this);
-  }
-
-  componentWillMount() {
-    this.iniDates(this.props.value);
-  }
-
-  componentDidMount() {
-    const viewport = this.viewport;
-    if (viewport) {
-      viewport.addEventListener('touchstart', this.handleContentTouch, false);
-      viewport.addEventListener('touchmove', this.handleContentTouch, false);
-      viewport.addEventListener('touchend', this.handleContentTouch, false);
-      viewport.addEventListener('mousedown', this.handleContentMouseDown, false);
+  const [marginTop, setMarginTop] = useState(0);
+  useEffect(() => () => {
+    if (moveToTimer.current) {
+      clearTimeout(moveToTimer.current);
     }
-  }
+  }, [moveToTimer]);
+  useEffect(() => {
+    currentIndex.current = MIDDLE_INDEX;
+    setStateTranslateY(MIDDLE_Y);
+    setMarginTop(0);
+    setDates(iniDates({ step, type, value }));
+  }, [step, type, value]);
 
-  componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.value.getTime() === this.props.value.getTime()) {
-      return;
-    }
-    this.iniDates(nextProps.value);
-    this.currentIndex = MIDDLEINDEX;
-    this.setState({
-      translateY: MIDDLEY,
-      marginTop: (this.currentIndex - MIDDLEINDEX) * DATEHEIGHT,
-    });
-  }
-
-  componentWillUnmount() {
-    const viewport = this.viewport;
-    if (viewport) {
-      viewport.removeEventListener('touchstart', this.handleContentTouch, false);
-      viewport.removeEventListener('touchmove', this.handleContentTouch, false);
-      viewport.removeEventListener('touchend', this.handleContentTouch, false);
-      viewport.removeEventListener('mousedown', this.handleContentMouseDown, false);
-    }
-    
-    clearTimeout(this.moveToTimer);
-  }
-
-  iniDates(date: Date) {
-    const typeName = this.props.type;
-    const dates = Array(...Array(DATELENGTH))
-      .map((value, index) =>
-        nextMap[typeName](date, (index - MIDDLEINDEX) * this.props.step));
-    this.setState({ dates });
-  }
-
-  updateDates(direction: number) {
-    const typeName = this.props.type;
-    const { dates } = this.state;
+  const updateDates = (direction: number) => {
     if (direction === 1) {
-      this.currentIndex ++;
-      this.setState({
-        dates: [
+      currentIndex.current++;
+      setDates(
+        [
           ...dates.slice(1),
-          nextMap[typeName](dates[dates.length - 1], this.props.step),
-        ],
-        marginTop: (this.currentIndex - MIDDLEINDEX) * DATEHEIGHT,
-      });
+          nextMap[type](dates[dates.length - 1], step),
+        ]);
     } else {
-      this.currentIndex --;
-      this.setState({
-        dates: [
-          nextMap[typeName](dates[0], -this.props.step),
+      currentIndex.current--;
+      setDates(
+        [
+          nextMap[type](dates[0], -step),
           ...dates.slice(0, dates.length - 1),
         ],
-        marginTop: (this.currentIndex - MIDDLEINDEX) * DATEHEIGHT,
-      });
+      );
     }
-  }
+    setMarginTop((currentIndex.current - MIDDLE_INDEX) * DATE_HEIGHT);
+  };
 
-  checkIsUpdateDates(direction: number, translateY: number) {
+  const checkIsUpdateDates = (direction: number, nextTranslateY: number) => {
     return direction === 1 ?
-      this.currentIndex * DATEHEIGHT + DATEHEIGHT / 2 < -translateY :
-      this.currentIndex * DATEHEIGHT - DATEHEIGHT / 2 > -translateY;
-  }
+      currentIndex.current * DATE_HEIGHT + DATE_HEIGHT / 2 < -nextTranslateY :
+      currentIndex.current * DATE_HEIGHT - DATE_HEIGHT / 2 > -nextTranslateY;
+  };
 
-  /**
-   * 清除对象的transition样式
-   * @param  {Dom}   obj   指定的对象
-   * @return {undefined}
-   */
-  clearTransition(obj: any) {
+  const clearTransition = (obj: any) => {
     addPrefixCss(obj, { transition: '' });
-  }
+  };
 
-  /**
-   * 滑动到下一日期
-   * @param  {number} direction 滑动方向
-   * @return {undefined}
-   */
-  moveToNext(direction: number) {
-    const date = this.state.dates[MIDDLEINDEX];
-    const { max, min } = this.props;
-    if (direction === -1 && date.getTime() < min.getTime() && this.moveDateCount) {
-      this.updateDates(1);
-    } else if (direction === 1 && date.getTime() > max.getTime() && this.moveDateCount) {
-      this.updateDates(-1);
+  const moveTo = (nextCurrentIndex: number) => {
+    setAnimating(true);
+    if (scroll.current) {
+      addPrefixCss(scroll.current, { transition: 'transform .2s ease-out' });
     }
-
-    this.moveTo(this.currentIndex);
-  }
-
-  /**
-   * 添加滑动动画
-   * @param  {number} angle 角度
-   * @return {undefined}
-   */
-  moveTo(currentIndex: number) {
-    this.animating = true;
-
-    addPrefixCss(this.refs.scroll as HTMLElement, { transition: 'transform .2s ease-out' });
-
-    this.setState({ translateY: -currentIndex * DATEHEIGHT });
+    setStateTranslateY(-nextCurrentIndex * DATE_HEIGHT);
 
     // NOTE: There is no transitionend, setTimeout is used instead.
-    this.moveToTimer = setTimeout(() => {
-      this.animating = false;
-      this.props.onSelect(this.state.dates[MIDDLEINDEX]);
-      this.clearTransition(this.refs.scroll);
+    moveToTimer.current = setTimeout(() => {
+      setAnimating(false);
+      onSelect(dates[MIDDLE_INDEX]);
+      clearTransition(scroll.current);
     }, 200);
-  }
+  };
 
-  handleStart(event: any) {
-    this.touchY =
-      (!isUndefined(event.targetTouches) &&
-       !isUndefined(event.targetTouches[0])) ?
-        event.targetTouches[0].pageY :
-        event.pageY;
+  const moveToNext = (direction: number) => {
+    const date = dates[MIDDLE_INDEX];
+    if (direction === -1 && date.getTime() < min.getTime() && moveDateCount.current) {
+      updateDates(1);
+    } else if (direction === 1 && date.getTime() > max.getTime() && moveDateCount.current) {
+      updateDates(-1);
+    }
 
-    this.translateY = this.state.translateY;
-    this.moveDateCount = 0;
-  }
+    moveTo(currentIndex.current);
+  };
 
 
-  handleMove(event: any) {
-    const touchY =
-      (!isUndefined(event.targetTouches) &&
-       !isUndefined(event.targetTouches[0])) ?
-        event.targetTouches[0].pageY :
-        event.pageY;
+  const handleStart = (event: React.TouchEvent<HTMLDivElement> | React.MouseEvent<HTMLDivElement> ) => {
+    touchY.current = isTouchEvent(event) ? 
+      event.targetTouches[0].pageY :
+      event.pageY;
 
-    const dir = touchY - this.touchY;
-    const translateY = this.translateY + dir;
+    translateY.current = stateTranslateY;
+    moveDateCount.current = 0;
+  };
+
+  const handleMove = (event: React.TouchEvent<HTMLDivElement> | React.MouseEvent<HTMLDivElement>) => {
+    const nextTouchY = isTouchEvent(event) ? 
+      event.targetTouches[0].pageY :
+      event.pageY;
+
+    const dir = nextTouchY - touchY.current;
+    const nextTranslateY = translateY.current + dir;
     const direction = dir > 0 ? -1 : 1;
 
-    // 日期最小值，最大值限制
-    const date = this.state.dates[MIDDLEINDEX];
-    const { max, min } = this.props;
+    const date = dates[MIDDLE_INDEX];
     if (date.getTime() < min.getTime() ||
       date.getTime() > max.getTime()) {
       return;
     }
 
-    // 检测是否更新日期列表
-    if (this.checkIsUpdateDates(direction, translateY)) {
-      this.moveDateCount = direction > 0 ? this.moveDateCount + 1 : this.moveDateCount - 1;
-      this.updateDates(direction);
+    if (checkIsUpdateDates(direction, nextTranslateY)) {
+      moveDateCount.current += direction > 0 ? 1 : - 1;
+      updateDates(direction);
     }
 
-    this.setState({ translateY });
-  }
+    setStateTranslateY(nextTranslateY);
+  };
 
-  handleEnd(event: any) {
-    const touchY = event.pageY || event.changedTouches[0].pageY;
-    const dir = touchY - this.touchY;
+  const handleEnd = (event: React.TouchEvent<HTMLDivElement> | React.MouseEvent<HTMLDivElement>) => {
+    const nextTouchY = isTouchEvent(event) ? event.changedTouches[0].pageY : event.pageY;
+    const dir = nextTouchY - touchY.current;
     const direction = dir > 0 ? -1 : 1;
-    this.moveToNext(direction);
-  }
+    moveToNext(direction);
+  };
 
-  /**
-   * 滑动日期选择器触屏事件
-   * @param  {Object} event 事件对象
-   * @return {undefined}
-   */
-  handleContentTouch(event: any) {
+  const handleContentTouch: React.TouchEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
-    if (this.animating) return;
+    if (animating) return;
     if (event.type === 'touchstart') {
-      this.handleStart(event);
+      handleStart(event);
     } else if (event.type === 'touchmove') {
-      this.handleMove(event);
+      handleMove(event);
     } else if (event.type === 'touchend') {
-      this.handleEnd(event);
+      handleEnd(event);
     }
-  }
+  };
 
-  /**
-   * 滑动日期选择器鼠标事件
-   * @param  {Object} event 事件对象
-   * @return {undefined}
-   */
-  handleContentMouseDown(event: any) {
-    if (this.animating) return;
-    this.handleStart(event);
-    document.addEventListener('mousemove', this.handleContentMouseMove);
-    document.addEventListener('mouseup', this.handleContentMouseUp);
-  }
+  const handleContentMouseMove: EventListener = (event) => {
+    if (animating) return;
+    handleMove(event as any);
+  };
 
-  handleContentMouseMove(event: any) {
-    if (this.animating) return;
-    this.handleMove(event);
-  }
+  const handleContentMouseUp: EventListener = (event) => {
+    if (animating) return;
+    setMouseDown(false);
+    handleEnd(event as any);
+  };
 
-  handleContentMouseUp(event: any) {
-    if (this.animating) return;
-    this.handleEnd(event);
-    document.removeEventListener('mousemove', this.handleContentMouseMove);
-    document.removeEventListener('mouseup', this.handleContentMouseUp);
-  }
+  const handleContentMouseDown: React.MouseEventHandler<HTMLDivElement> = (event) => {
+    if (animating) return;
+    setMouseDown(true);
+    handleStart(event);
+  };
 
-  /**
-   * 渲染一个日期DOM对象
-   * @param  {Object} date date数据
-   * @return {Object}    JSX对象
-   */
-  renderDatepickerItem(date: Date, index: number) {
+  useEffect(() => {
+    if (mouseDown) {
+      document.addEventListener('mousemove', handleContentMouseMove);
+      document.addEventListener('mouseup', handleContentMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleContentMouseMove);
+        document.removeEventListener('mouseup', handleContentMouseUp);
+      };
+    }
+  }, [mouseDown, handleContentMouseMove, handleContentMouseUp]);
+  const renderDatepickerItem = useCallback((date: Date, index: number) => {
     const className =
-      (date < this.props.min || date > this.props.max) ?
+      (date < min || date > max) ?
         'disabled' : '';
 
     let formatDate;
-    if (isFunction(this.props.format)) {
-      formatDate = this.props.format(date);
+    if (isFunction(format)) {
+      formatDate = format(date);
     } else {
-      formatDate = convertDate(date, this.props.format);
+      formatDate = convertDate(date, format);
     }
 
     return (
       <li
-        key={index}
+        key={`${index}`}
         className={className}>
         {formatDate}
       </li>
     );
-  }
+  }, [min, max, format]);
 
-  render() {
-    const scrollStyle = formatCss({
-      transform: `translateY(${this.state.translateY}px)`,
-      marginTop: `${this.state.marginTop}px`,
-    });
-
-    return (
+  const scrollStyle = formatCss({
+    transform: `translateY(${stateTranslateY}px)`,
+    marginTop: `${marginTop}px`,
+  });
+  return (
       <div className='datepicker-col-1'>
         <div
-          ref={viewport => this.viewport = viewport} // eslint-disable-line
-          className='datepicker-viewport'>
+          className='datepicker-viewport'
+          // ref={viewport}
+          onTouchStart={handleContentTouch}
+          onTouchMove={handleContentTouch}
+          onTouchEnd={handleContentTouch}
+          onMouseDown={handleContentMouseDown}
+        >
           <div className='datepicker-wheel'>
             <ul
-              ref='scroll'
+              ref={scroll}
               className='datepicker-scroll'
-              style={scrollStyle}>
-              {this.state.dates.map(this.renderDatepickerItem)}
+              style={scrollStyle}
+            >
+              {dates.map(renderDatepickerItem)}
             </ul>
           </div>
         </div>
       </div>
-    );
-  }
-}
+  );
+};
 
-export default DatePickerItem;
+export default React.memo(DatePickerItem, (prevProps, nextProps) => prevProps.value.getTime() === nextProps.value.getTime());
