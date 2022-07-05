@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import { Theme } from './types';
+
 export const Modal = styled.div`
 	position: absolute;
 	right: 0;
@@ -12,7 +14,8 @@ export const Modal = styled.div`
 	align-items: center;
 	justify-content: center;
 `;
-export const Root = styled.div`
+
+export const Root = styled.div<{ themeName: Theme }>`
 	position: absolute;
 	left: 0;
 	bottom: 0;
@@ -98,7 +101,7 @@ export const Root = styled.div`
 			cursor: pointer;
 		}
 	}
-  &.default {
+  ${({ themeName }) => themeName === 'default' && `
   	background-color: #f7f7f7;
   	.datepicker-header {
   		color: #4eccc4;
@@ -121,8 +124,9 @@ export const Root = styled.div`
   	.datepicker-navbar-btn {
   		color: #4eccc4;
   	}
-  }
-  &.dark {
+  `}
+  
+  ${({ themeName }) => themeName === 'dark' && `
   	background-color: #263238;
   	.datepicker-header {
   		color: #50ccc4;
@@ -145,8 +149,8 @@ export const Root = styled.div`
   	.datepicker-navbar-btn {
   		color: #50ccc4;
   	}
-  }
-  &.ios {
+  `}
+  ${({ themeName }) => themeName === 'ios' && `
   	background-color: #f7f7f7;
   	.datepicker-col-1 {
   		margin: 0;
@@ -205,8 +209,8 @@ export const Root = styled.div`
   			}
   		}
   	}
-  }
-  &.android {
+  `}
+  ${({ themeName }) => themeName === 'android' && `
   	background-color: #f5f5f5;
   	.datepicker-header {
   		color: #31b6e7;
@@ -249,8 +253,8 @@ export const Root = styled.div`
   			border-left: 1px solid #d9d4d4;
   		}
   	}
-  }
-  &.android-dark {
+  `}
+  ${({ themeName }) => themeName === 'android-dark' && `
   	background-color: #292829;
   	.datepicker-header {
   		color: #31b6e7;
@@ -297,5 +301,5 @@ export const Root = styled.div`
   			border-color: #424542;
   		}
   	}
-  }
+  `}
 `;

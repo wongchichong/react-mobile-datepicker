@@ -4,13 +4,16 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { DateConfig, dateConfigMap } from './dataSource';
 import DatePickerItem from './DatePickerItem';
 import { Root } from './styles';
-import { convertDate, nextDate, Unit } from './time';
+import {
+  DateConfig, dateConfigMap, Theme, Unit,
+} from './types';
+import { isDateConfig, isDateConfigKey, isTheme } from './utils';
+import { convertDate, nextDate } from './utils/time';
 
 export interface DatePickerProps {
-  theme?: string,
+  theme?: Theme,
   value?: Date,
   min?: Date,
   max?: Date,
@@ -27,25 +30,21 @@ export interface DatePickerProps {
   onCancel?: React.MouseEventHandler<HTMLButtonElement | HTMLDivElement>,
 }
 
-const isString = (val: any): val is keyof typeof dateConfigMap => !!dateConfigMap.hasOwnProperty(val);
-
 const normalizeDateConfig = (dateConfig: Required<DatePickerProps>['dateConfig']) => {
   const configList: DateConfig[] = dateConfig.map((value: string | DateConfig) => {
-    if (isString(value)) {
+    if (isDateConfigKey(value)) {
       return {
         ...dateConfigMap[value as keyof typeof dateConfigMap],
         type: value,
       };
     }
-    if (typeof value === 'object') {
+    if (isDateConfig(value)) {
       const key = value.type;
-      if (isString(key)) {
-        return {
-          ...dateConfigMap[key],
-          ...value,
-          type: key,
-        };
-      }
+      return {
+        ...dateConfigMap[key],
+        ...value,
+        type: key,
+      };
     }
     throw new Error('invalid dateConfig');
   });
@@ -80,9 +79,10 @@ const DatePicker: React.FC<DatePickerProps> = ({
     {
       format: 'D',
       caption: 'Day',
+      type: 'date',
       step: 1,
     },
-  ] as DateConfig[],
+  ],
   headerFormat = 'YYYY/MM/DD',
   confirmText = 'Done',
   cancelText = 'Cancel',
@@ -122,15 +122,12 @@ const DatePicker: React.FC<DatePickerProps> = ({
     }
   };
 
-  const themeClassName =
-            ['default', 'dark', 'ios', 'android', 'android-dark'].indexOf(theme) === -1 ?
-              'default' : theme;
-
   const dataConfigList = normalizeDateConfig(dateConfig);
-
   return (
     <Root
-      className={`datepicker ${themeClassName}`}>
+      themeName={isTheme(theme) ? theme : 'default'}
+      className='datepicker'
+    >
       {showHeader && (
         <div className='datepicker-header'>
           {customHeader || convertDate(value, headerFormat)}
@@ -139,7 +136,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
       {showCaption && (
         <div className='datepicker-caption'>
           {dataConfigList.map((item, index) => (
-          <div key={index} className='datepicker-caption-item'>{item.caption}</div>
+            <div key={index} className='datepicker-caption-item'>{item.caption}</div>
           ))}
         </div>
       )}
@@ -156,14 +153,22 @@ const DatePicker: React.FC<DatePickerProps> = ({
             onSelect={handleDateSelect} />
         ))}
       </div>
-      {showFooter && <div className='datepicker-navbar'>
-        <button
-          className='datepicker-navbar-btn'
-          onClick={handleFinishBtnClick}>{confirmText}</button>
-        <button
-          className='datepicker-navbar-btn'
-          onClick={onCancel}>{cancelText}</button>
-      </div>}
+      {showFooter && (
+        <div className='datepicker-navbar'>
+          <button
+            className='datepicker-navbar-btn'
+            onClick={handleFinishBtnClick}
+          >
+            {confirmText}
+          </button>
+          <button
+            className='datepicker-navbar-btn'
+            onClick={onCancel}
+          >
+            {cancelText}
+          </button>
+        </div>
+      )}
     </Root>
   );
 };

@@ -1,4 +1,12 @@
-import { Unit } from './time';
+export type Unit = 'year' | 'month' | 'date' | 'hour' | 'minute' | 'second';
+
+export enum Direction {
+  UP = 1,
+  DOWN = -1,
+}
+
+export const Themes = ['default', 'dark', 'ios', 'android', 'android-dark'] as const;
+export type Theme = typeof Themes[number];
 
 export interface DateConfig {
   format: string,

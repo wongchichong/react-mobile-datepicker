@@ -1,6 +1,4 @@
-/**
- * @module time工具
- */
+import { Unit } from './types';
 
 function throwIfInvalidDate(date: Date) {
   if (Object.prototype.toString.call(date) !== '[object Date]') {
@@ -12,11 +10,6 @@ function daysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate();
 }
 
-/**
- * 对Date的扩展，将 Date 转化为指定格式的String
- * @param  {Date}       日期
- * @return {String}     字符串格式
- */
 export function convertDate(date: Date, format: string) {
   let str = format;
   const o = {
@@ -44,11 +37,6 @@ export function convertDate(date: Date, format: string) {
   return str;
 }
 
-/**
- * 获取相对日期的偏移日期
- * @param  {Date}       日期
- * @return {number}     相对的天数
- */
 export function nextYear(now: Date, index = 0) {
   throwIfInvalidDate(now);
   const date = new Date(
@@ -101,8 +89,6 @@ export function nextSecond(now: Date, index = 0) {
   const date = new Date(now.getTime() + index * 1000);
   return date;
 }
-
-export type Unit = 'year' | 'month' | 'date' | 'hour' | 'minute' | 'second';
 
 export const nextMap: {
   [k in Unit]: typeof nextYear | typeof nextMonth | typeof nextDate | typeof nextMinute | typeof nextSecond | typeof nextHour;

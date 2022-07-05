@@ -45,7 +45,7 @@ const ModalDatePicker: React.FC<ModalDatePickerProps> = ({ isPopup = true, isOpe
 
 ModalDatePicker.displayName = 'MobileDatePicker';
 
-export type { DateConfig } from './dataSource';
+export type { DateConfig } from './types';
 export type { ModalDatePickerProps, EnhanceDatePickerProps, DatePickerProps };
 
 export default ModalDatePicker;

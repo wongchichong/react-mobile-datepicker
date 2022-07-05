@@ -1,23 +1,25 @@
 import React, {
   FC, useCallback, useEffect, useRef, useState,
 } from 'react';
+import styled, { css } from 'styled-components';
 
-import { addPrefixCss, formatCss } from './prefix';
-import { convertDate, nextMap, Unit } from './time';
+import { Direction, Unit } from './types';
+import { isFunction, isTouchEvent } from './utils';
+import { convertDate, nextMap } from './utils/time';
+
+const Scroll = styled.ul<{ isAnimating: boolean }>`
+  transform: translateY(calc(var(--translate-y) * 1px));
+  margin-top: calc(var(--margin-top) * 1px);
+  ${({ isAnimating }) => isAnimating && `
+   transition: transform .2s ease-out;
+  `}
+`;
 
 const DATE_HEIGHT = 40;
 const DATE_LENGTH = 10;
 const MIDDLE_INDEX = Math.floor(DATE_LENGTH / 2);
 const MIDDLE_Y = - DATE_HEIGHT * MIDDLE_INDEX;
 
-const isUndefined = (val: any) => typeof val === 'undefined';
-
-const isTouchEvent = (e: any): e is React.TouchEvent<HTMLDivElement> => {
-  return !isUndefined(e.targetTouches) &&
-         !isUndefined(e.targetTouches[0]);
-};
-
-const isFunction = (val: any): val is Function => Object.prototype.toString.apply(val)  === '[object Function]';
 
 interface Props {
   type: Unit,
@@ -43,23 +45,24 @@ const DatePickerItem: FC<Props> = ({
   step,
   onSelect,
 }) => {
-  const scroll = useRef<HTMLUListElement | null>(null);
-  const [animating, setAnimating] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const touchY = useRef(0);
   const translateY = useRef(0);
   const currentIndex = useRef(MIDDLE_INDEX);
   const moveDateCount = useRef(0);
   const [mouseDown, setMouseDown] = useState(false);
-  const moveToTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const moveToTimer = useRef<ReturnType<typeof setTimeout> | void>();
   const [stateTranslateY, setStateTranslateY] = useState(MIDDLE_Y);
   const [dates, setDates] = useState(iniDates({ step, type, value }));
 
   const [marginTop, setMarginTop] = useState(0);
+
   useEffect(() => () => {
     if (moveToTimer.current) {
       clearTimeout(moveToTimer.current);
     }
   }, [moveToTimer]);
+
   useEffect(() => {
     currentIndex.current = MIDDLE_INDEX;
     setStateTranslateY(MIDDLE_Y);
@@ -67,8 +70,8 @@ const DatePickerItem: FC<Props> = ({
     setDates(iniDates({ step, type, value }));
   }, [step, type, value]);
 
-  const updateDates = (direction: number) => {
-    if (direction === 1) {
+  const updateDates = (direction: Direction) => {
+    if (direction === Direction.UP) {
       currentIndex.current++;
       setDates(
         [
@@ -87,37 +90,29 @@ const DatePickerItem: FC<Props> = ({
     setMarginTop((currentIndex.current - MIDDLE_INDEX) * DATE_HEIGHT);
   };
 
-  const checkIsUpdateDates = (direction: number, nextTranslateY: number) => {
-    return direction === 1 ?
+  const checkIsUpdateDates = (direction: Direction, nextTranslateY: number) => {
+    return direction === Direction.UP ?
       currentIndex.current * DATE_HEIGHT + DATE_HEIGHT / 2 < -nextTranslateY :
       currentIndex.current * DATE_HEIGHT - DATE_HEIGHT / 2 > -nextTranslateY;
   };
 
-  const clearTransition = (obj: any) => {
-    addPrefixCss(obj, { transition: '' });
-  };
-
   const moveTo = (nextCurrentIndex: number) => {
-    setAnimating(true);
-    if (scroll.current) {
-      addPrefixCss(scroll.current, { transition: 'transform .2s ease-out' });
-    }
+    setIsAnimating(true);
     setStateTranslateY(-nextCurrentIndex * DATE_HEIGHT);
 
     // NOTE: There is no transitionend, setTimeout is used instead.
     moveToTimer.current = setTimeout(() => {
-      setAnimating(false);
+      setIsAnimating(false);
       onSelect(dates[MIDDLE_INDEX]);
-      clearTransition(scroll.current);
     }, 200);
   };
 
-  const moveToNext = (direction: number) => {
+  const moveToNext = (direction: Direction) => {
     const date = dates[MIDDLE_INDEX];
-    if (direction === -1 && date.getTime() < min.getTime() && moveDateCount.current) {
-      updateDates(1);
-    } else if (direction === 1 && date.getTime() > max.getTime() && moveDateCount.current) {
-      updateDates(-1);
+    if (direction === Direction.UP && date.getTime() < min.getTime() && moveDateCount.current) {
+      updateDates(Direction.UP);
+    } else if (direction === Direction.DOWN && date.getTime() > max.getTime() && moveDateCount.current) {
+      updateDates(Direction.DOWN);
     }
 
     moveTo(currentIndex.current);
@@ -140,7 +135,7 @@ const DatePickerItem: FC<Props> = ({
 
     const dir = nextTouchY - touchY.current;
     const nextTranslateY = translateY.current + dir;
-    const direction = dir > 0 ? -1 : 1;
+    const direction = dir > 0 ? Direction.DOWN : Direction.UP;
 
     const date = dates[MIDDLE_INDEX];
     if (date.getTime() < min.getTime() ||
@@ -149,7 +144,7 @@ const DatePickerItem: FC<Props> = ({
     }
 
     if (checkIsUpdateDates(direction, nextTranslateY)) {
-      moveDateCount.current += direction > 0 ? 1 : - 1;
+      moveDateCount.current += direction;
       updateDates(direction);
     }
 
@@ -158,14 +153,13 @@ const DatePickerItem: FC<Props> = ({
 
   const handleEnd = (event: React.TouchEvent<HTMLDivElement> | React.MouseEvent<HTMLDivElement>) => {
     const nextTouchY = isTouchEvent(event) ? event.changedTouches[0].pageY : event.pageY;
-    const dir = nextTouchY - touchY.current;
-    const direction = dir > 0 ? -1 : 1;
+    const direction = (nextTouchY - touchY.current) > 0 ? Direction.UP : Direction.DOWN;
     moveToNext(direction);
   };
 
   const handleContentTouch: React.TouchEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
-    if (animating) return;
+    if (isAnimating) return;
     if (event.type === 'touchstart') {
       handleStart(event);
     } else if (event.type === 'touchmove') {
@@ -176,18 +170,18 @@ const DatePickerItem: FC<Props> = ({
   };
 
   const handleContentMouseMove: EventListener = (event) => {
-    if (animating) return;
+    if (isAnimating) return;
     handleMove(event as any);
   };
 
   const handleContentMouseUp: EventListener = (event) => {
-    if (animating) return;
+    if (isAnimating) return;
     setMouseDown(false);
     handleEnd(event as any);
   };
 
   const handleContentMouseDown: React.MouseEventHandler<HTMLDivElement> = (event) => {
-    if (animating) return;
+    if (isAnimating) return;
     setMouseDown(true);
     handleStart(event);
   };
@@ -202,6 +196,7 @@ const DatePickerItem: FC<Props> = ({
       };
     }
   }, [mouseDown, handleContentMouseMove, handleContentMouseUp]);
+
   const renderDatepickerItem = useCallback((date: Date, index: number) => {
     const className =
       (date < min || date > max) ?
@@ -223,28 +218,28 @@ const DatePickerItem: FC<Props> = ({
     );
   }, [min, max, format]);
 
-  const scrollStyle = formatCss({
-    transform: `translateY(${stateTranslateY}px)`,
-    marginTop: `${marginTop}px`,
-  });
+  const scrollStyle = {
+    '--margin-top': marginTop,
+    '--translate-y': stateTranslateY,
+  } as React.CSSProperties;
+
   return (
       <div className='datepicker-col-1'>
         <div
           className='datepicker-viewport'
-          // ref={viewport}
           onTouchStart={handleContentTouch}
           onTouchMove={handleContentTouch}
           onTouchEnd={handleContentTouch}
           onMouseDown={handleContentMouseDown}
         >
           <div className='datepicker-wheel'>
-            <ul
-              ref={scroll}
+            <Scroll
+              isAnimating={isAnimating}
               className='datepicker-scroll'
               style={scrollStyle}
             >
               {dates.map(renderDatepickerItem)}
-            </ul>
+            </Scroll>
           </div>
         </div>
       </div>
