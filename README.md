@@ -1,12 +1,12 @@
-# react-mobile-datepicker-typescript
+# react-mobile-datepicker-ts
 [![npm package][npm-badge]][npm]
 
-**a  lightweight react date picker for mobile, Not more than 20k**
+**a lightweight react date picker for mobile, Not more than 4k**
 
-react-mobile-datepicker-typescript provides a component that can set year, month, day, hour, minute and second by sliding up or down.
+react-mobile-datepicker-ts provides a component that can set year, month, day, hour, minute and second by sliding up or down.
 
 ## Features
-- is only 20k.
+- is only 4k.
 - It does not depend on moment.js
 
 ## Theme
@@ -186,7 +186,7 @@ const dateConfig = [{
 
 Using [npm](https://www.npmjs.com/):
 
-  $ npm install react-mobile-datepicker-typescript --save
+  $ npm install react-mobile-datepicker-ts --save
 
 ### Import what you need
 The following guide assumes you have some sort of ES2015 build set up using babel and/or webpack/browserify/gulp/grunt/etc.
@@ -197,6 +197,7 @@ The following guide assumes you have some sort of ES2015 build set up using babe
 import  React from 'react';
 import ReactDOM from 'react-dom';
 import DatePicker from 'react-mobile-datepicker';
+import 'react-mobile-datepicker-ts/dist/main.css'
 ```
 
 
@@ -206,7 +207,8 @@ import DatePicker from 'react-mobile-datepicker';
 ```javascript
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import DatePicker from '../../lib';
+import DatePicker from 'react-mobile-datepicker';
+import 'react-mobile-datepicker-ts/dist/main.css'
 
 const App = () => {
   const [time, setTime] = React.useState(new Date());
@@ -318,13 +320,13 @@ all default date configuration information, as follows
 ## How to Contribute
 
 Anyone and everyone is welcome to contribute to this project. The best way to
-start is by checking our [open issues](https://github.com/jin60641/react-mobile-datepicker-typescript/issues),
-[submit a new issues](https://github.com/jin60641/react-mobile-datepicker-typescript/issues/new?labels=bug) or
-[feature request](https://github.com/jin60641/react-mobile-datepicker-typescript/issues/new?labels=enhancement),
+start is by checking our [open issues](https://github.com/jin60641/react-mobile-datepicker-ts/issues),
+[submit a new issues](https://github.com/jin60641/react-mobile-datepicker-ts/issues/new?labels=bug) or
+[feature request](https://github.com/jin60641/react-mobile-datepicker-ts/issues/new?labels=enhancement),
 participate in discussions, upvote or downvote the issues you like or dislike.
 
 
 
 
-[npm-badge]: https://img.shields.io/npm/v/react-mobile-datepicker-typescript.svg?style=flat-square
-[npm]: https://www.npmjs.com/package/react-mobile-datepicker-typescript
+[npm-badge]: https://img.shields.io/npm/v/react-mobile-datepicker-ts.svg?style=flat-square
+[npm]: https://www.npmjs.com/package/react-mobile-datepicker-ts

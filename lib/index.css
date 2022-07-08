@@ -1,8 +1,4 @@
-import styled from 'styled-components';
-
-import { Theme } from './types';
-
-export const Modal = styled.div`
+.datepicker-modal {
 	position: absolute;
 	right: 0;
 	bottom: 0;
@@ -13,9 +9,8 @@ export const Modal = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-`;
-
-export const Root = styled.div<{ themeName: Theme }>`
+}
+.datepicker {
 	position: absolute;
 	left: 0;
 	bottom: 0;
@@ -92,6 +87,8 @@ export const Root = styled.div<{ themeName: Theme }>`
 		width: 100%;
 	}
 	.datepicker-scroll {
+    transform: translateY(calc(var(--translate-y) * 1px));
+    margin-top: calc(var(--margin-top) * 1px);
 		list-style-type: none;
 		padding: 0;
 		>li {
@@ -100,8 +97,11 @@ export const Root = styled.div<{ themeName: Theme }>`
 			font-size: 1.375em;
 			cursor: pointer;
 		}
+    &.active {
+      transition: transform .2s ease-out;
+    }
 	}
-  ${({ themeName }) => themeName === 'default' && `
+  &.default {
   	background-color: #f7f7f7;
   	.datepicker-header {
   		color: #4eccc4;
@@ -124,9 +124,8 @@ export const Root = styled.div<{ themeName: Theme }>`
   	.datepicker-navbar-btn {
   		color: #4eccc4;
   	}
-  `}
-  
-  ${({ themeName }) => themeName === 'dark' && `
+  }
+  &.dark {
   	background-color: #263238;
   	.datepicker-header {
   		color: #50ccc4;
@@ -149,8 +148,8 @@ export const Root = styled.div<{ themeName: Theme }>`
   	.datepicker-navbar-btn {
   		color: #50ccc4;
   	}
-  `}
-  ${({ themeName }) => themeName === 'ios' && `
+  }
+  &.ios {
   	background-color: #f7f7f7;
   	.datepicker-col-1 {
   		margin: 0;
@@ -209,8 +208,8 @@ export const Root = styled.div<{ themeName: Theme }>`
   			}
   		}
   	}
-  `}
-  ${({ themeName }) => themeName === 'android' && `
+  }
+  &.android {
   	background-color: #f5f5f5;
   	.datepicker-header {
   		color: #31b6e7;
@@ -253,8 +252,8 @@ export const Root = styled.div<{ themeName: Theme }>`
   			border-left: 1px solid #d9d4d4;
   		}
   	}
-  `}
-  ${({ themeName }) => themeName === 'android-dark' && `
+  }
+  &.android-dark {
   	background-color: #292829;
   	.datepicker-header {
   		color: #31b6e7;
@@ -301,5 +300,5 @@ export const Root = styled.div<{ themeName: Theme }>`
   			border-color: #424542;
   		}
   	}
-  `}
-`;
+  }
+}

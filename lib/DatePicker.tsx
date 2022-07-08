@@ -5,7 +5,6 @@
 import React, { useEffect, useState } from 'react';
 
 import DatePickerItem from './DatePickerItem';
-import { Root } from './styles';
 import {
   DateConfig, dateConfigMap, Theme, Unit,
 } from './types';
@@ -124,9 +123,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
 
   const dataConfigList = normalizeDateConfig(dateConfig);
   return (
-    <Root
-      themeName={isTheme(theme) ? theme : 'default'}
-      className='datepicker'
+    <div
+      className={`datepicker ${isTheme(theme) ? theme : 'default'}`}
     >
       {showHeader && (
         <div className='datepicker-header'>
@@ -169,7 +167,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
           </button>
         </div>
       )}
-    </Root>
+    </div>
   );
 };
 

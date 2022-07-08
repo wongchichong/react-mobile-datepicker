@@ -1,12 +1,12 @@
 import * as React from 'react';
+import './index.css'
 import * as ReactDOM from 'react-dom';
-import { Root, Time, Button } from './styles';
-import DatePicker from '../../lib';
+import DatePicker, { Theme, Themes } from '../../lib';
 
 const App = () => {
   const [time, setTime] = React.useState(new Date());
   const [isOpen, setIsOpen] = React.useState(false);
-  const [theme, setTheme] = React.useState('default');
+  const [theme, setTheme] = React.useState<Theme>('default');
   const handleToggle = (nextIsOpen: typeof isOpen) => {
     setIsOpen(nextIsOpen);
   }
@@ -22,31 +22,20 @@ const App = () => {
   }
 
   return (
-    <Root>
-      <Time>
+    <div className='root'>
+      <div className='time'>
         {time.toLocaleDateString()}
-      </Time>
+      </div>
       <div>
-        <Button
-          onClick={() => handleThemeToggle('default')}>
-          default
-        </Button>
-        <Button
-          onClick={() => handleThemeToggle('dark')}>
-          dark
-        </Button>
-        <Button
-          onClick={() => handleThemeToggle('ios')}>
-          ios
-        </Button>
-        <Button
-          onClick={() => handleThemeToggle('android')}>
-          android
-        </Button>
-        <Button
-          onClick={() => handleThemeToggle('android-dark')}>
-          android-dark
-        </Button>
+        {Themes.map(t => (
+          <div
+            key={`button-${t}`}
+            className='button'
+            onClick={() => handleThemeToggle(t)}
+          >
+            {t}
+          </div>
+        ))}
       </div>
       <DatePicker
         value={time}
@@ -75,7 +64,7 @@ const App = () => {
         onSelect={handleSelect}
         onCancel={() => handleToggle(false)}
       />
-    </Root>
+    </div>
   );
 }
 

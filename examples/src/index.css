@@ -1,0 +1,17 @@
+.root {
+  text-align: center;
+}
+
+.time {
+  margin-top: 1rem;
+  font-size: 2rem;
+}
+
+.button {
+  display: inline-block;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background: #fff;
+  margin: .5rem .5rem;
+  padding: .5rem;
+}

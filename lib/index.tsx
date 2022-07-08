@@ -1,3 +1,4 @@
+import './index.css';
 import * as React from 'react';
 
 import DatePicker, { DatePickerProps } from './DatePicker';
@@ -8,9 +9,16 @@ interface EnhanceDatePickerProps extends Pick<DatePickerProps, 'onCancel'> {
 }
 
 const EnhanceDatePicker: React.FC<EnhanceDatePickerProps> = ({ isOpen = false, onCancel, ...props }) => {
+  const [isModal, setIsModal] = React.useState(false);
   const onModalClose: React.MouseEventHandler<HTMLDivElement> = (event) => {
-    if (event.target === event.currentTarget && onCancel) {
+    if (isModal && event.target === event.currentTarget && onCancel) {
+      setIsModal(false);
       onCancel(event);
+    }
+  };
+  const handleStart: React.MouseEventHandler<HTMLDivElement> & React.TouchEventHandler<HTMLDivElement> = (e) => {
+    if (e.target === e.currentTarget && onCancel) {
+      setIsModal(true);
     }
   };
   if (!isOpen) {
@@ -19,8 +27,10 @@ const EnhanceDatePicker: React.FC<EnhanceDatePickerProps> = ({ isOpen = false, o
   return (
     <div
       role='presentation'
-        onClick={onModalClose}
-        className='datepicker-modal'
+      onMouseDown={handleStart}
+      onTouchStart={handleStart}
+      onClick={onModalClose}
+      className='datepicker-modal'
     >
       <DatePicker {...props} />
     </div>
@@ -45,7 +55,7 @@ const ModalDatePicker: React.FC<ModalDatePickerProps> = ({ isPopup = true, isOpe
 
 ModalDatePicker.displayName = 'MobileDatePicker';
 
-export type { DateConfig } from './types';
+export * from './types';
 export type { ModalDatePickerProps, EnhanceDatePickerProps, DatePickerProps };
 
 export default ModalDatePicker;

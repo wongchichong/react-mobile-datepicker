@@ -1,9 +1,10 @@
 /* eslint-disable */
-var path = require('path');
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-var EXAMPLES_DIR = path.resolve(__dirname, 'examples');
+const EXAMPLES_DIR = path.resolve(__dirname, 'examples');
 
 module.exports = {
   mode: 'development',
@@ -19,10 +20,18 @@ module.exports = {
     host: '0.0.0.0',
   },
   resolve: {
-    extensions: ['.json', '.js', '.jsx', '.ts', '.tsx'],
+    extensions: ['.json', '.js', '.jsx', '.ts', '.tsx', '.css'],
   },
   module: {
     rules: [
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'postcss-loader',
+        ],
+      },
       {
         test: /\.tsx?$/,
         loader: 'babel-loader',
@@ -30,6 +39,9 @@ module.exports = {
     ],
   },
   plugins: [
+    new MiniCssExtractPlugin({
+        filename: '[name].css',
+    }),
     new HtmlWebpackPlugin({
       title: 'lib-temlate',
       template: path.resolve(EXAMPLES_DIR, 'public', 'index.html'), // Load a custom template

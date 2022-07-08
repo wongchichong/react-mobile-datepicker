@@ -1,4 +1,4 @@
-import { Unit } from './types';
+import { Unit } from '../types';
 
 function throwIfInvalidDate(date: Date) {
   if (Object.prototype.toString.call(date) !== '[object Date]') {

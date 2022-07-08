@@ -1,19 +1,10 @@
 import React, {
   FC, useCallback, useEffect, useRef, useState,
 } from 'react';
-import styled, { css } from 'styled-components';
 
 import { Direction, Unit } from './types';
 import { isFunction, isTouchEvent } from './utils';
 import { convertDate, nextMap } from './utils/time';
-
-const Scroll = styled.ul<{ isAnimating: boolean }>`
-  transform: translateY(calc(var(--translate-y) * 1px));
-  margin-top: calc(var(--margin-top) * 1px);
-  ${({ isAnimating }) => isAnimating && `
-   transition: transform .2s ease-out;
-  `}
-`;
 
 const DATE_HEIGHT = 40;
 const DATE_LENGTH = 10;
@@ -181,6 +172,7 @@ const DatePickerItem: FC<Props> = ({
   };
 
   const handleContentMouseDown: React.MouseEventHandler<HTMLDivElement> = (event) => {
+    event.stopPropagation();
     if (isAnimating) return;
     setMouseDown(true);
     handleStart(event);
@@ -233,13 +225,12 @@ const DatePickerItem: FC<Props> = ({
           onMouseDown={handleContentMouseDown}
         >
           <div className='datepicker-wheel'>
-            <Scroll
-              isAnimating={isAnimating}
-              className='datepicker-scroll'
+            <div
+              className={`datepicker-scroll ${isAnimating ? 'active' : ''}`}
               style={scrollStyle}
             >
               {dates.map(renderDatepickerItem)}
-            </Scroll>
+            </div>
           </div>
         </div>
       </div>
