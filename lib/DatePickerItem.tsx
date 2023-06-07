@@ -20,7 +20,7 @@ interface Props {
   format: string | ((date: Date) => string),
   step: number,
   onSelect: Function,
-  /** todo should change to date not pixel */
+  /** todo should change to date steps not pixel steps*/
   // fastWheelMultiplier?: number
 }
 
@@ -168,11 +168,11 @@ const DatePickerItem: FC<Props> = ({
     setStateTranslateY(nextTranslateY);
   };
   const handleEnd = (event: React.TouchEvent<HTMLDivElement> | React.MouseEvent<HTMLDivElement> | React.WheelEvent<HTMLDivElement>) => {
-    const isWheel = isWheelEvent(event)
+    const isWheel = isWheelEvent(event);
     const nextTouchY = isTouchEvent(event) ? event.changedTouches[0].pageY : isWheel ? event.deltaY : event.pageY;
     const direction = (nextTouchY - touchY.current) > 0 ? Direction.UP : Direction.DOWN;
 
-    moveToNext(direction, isWheel);
+    moveToNext(direction);
   };
 
   const handleContentTouch: React.TouchEventHandler<HTMLDivElement> = (event) => {
@@ -220,9 +220,9 @@ const DatePickerItem: FC<Props> = ({
     const date = dates[MIDDLE_INDEX];
     if (date.getTime() < min.getTime() || date.getTime() > max.getTime()) {
       if (date.getTime() < min.getTime())
-        moveToNext(Direction.UP, true);
+        moveToNext(Direction.UP);
       else
-        moveToNext(Direction.DOWN, true);
+        moveToNext(Direction.DOWN);
       // moveTo(e.deltaY < 0 ? --currentIndex.current : ++currentIndex.current, true);
       // return;
     }
@@ -233,7 +233,8 @@ const DatePickerItem: FC<Props> = ({
       // --currentIndex.current;
       // moveToNext(e.deltaY > 0 ? Direction.DOWN : Direction.UP, true);
 
-      moveTo(e.deltaY > 0 ? --currentIndex.current : ++currentIndex.current, true);
+      //fix 2 scroll per row
+      moveTo(e.deltaY > 0 ? --currentIndex.current : ++currentIndex.current);
     }
   }, [dates]);
 
