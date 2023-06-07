@@ -92,19 +92,18 @@ const DatePickerItem: FC<Props> = ({
       currentIndex.current * DATE_HEIGHT - DATE_HEIGHT / 2 > -nextTranslateY;
   };
 
-  const moveTo = (nextCurrentIndex: number, isWheel: boolean) => {
+  const moveTo = (nextCurrentIndex: number) => {
     setIsAnimating(true);
     setStateTranslateY(-nextCurrentIndex * DATE_HEIGHT);
 
     // NOTE: There is no transitionend, setTimeout is used instead.
-    if (!isWheel)
-      moveToTimer.current = setTimeout(() => {
-        setIsAnimating(false);
-        onSelect(dates[MIDDLE_INDEX]);
-      }, 200);
+    moveToTimer.current = setTimeout(() => {
+      setIsAnimating(false);
+      onSelect(dates[MIDDLE_INDEX]);
+    }, 200);
   };
 
-  const moveToNext = (direction: Direction, isWheel: boolean) => {
+  const moveToNext = (direction: Direction) => {
     const date = dates[MIDDLE_INDEX];
     if (direction === Direction.UP && date.getTime() < min.getTime() && moveDateCount.current) {
       updateDates(Direction.UP);
@@ -112,7 +111,7 @@ const DatePickerItem: FC<Props> = ({
       updateDates(Direction.DOWN);
     }
 
-    moveTo(currentIndex.current, isWheel);
+    moveTo(currentIndex.current);
   };
 
 
@@ -148,7 +147,7 @@ const DatePickerItem: FC<Props> = ({
 
     let nextTouchY = isTouchEvent(event) ?
       event.targetTouches[0].pageY :
-      isWheel ? -(event as React.WheelEvent<HTMLDivElement>).deltaY : //* (scrollSpeed > 3 ? /* fastWheelMultiplier */10 : 1) :
+      isWheel ? -(event as React.WheelEvent<HTMLDivElement>).deltaY * (scrollSpeed > 3 ? /* fastWheelMultiplier */10 : 1) :
         event.pageY;
 
     const dir = nextTouchY - touchY.current;
