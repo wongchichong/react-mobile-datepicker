@@ -1,5 +1,5 @@
 import {
-  DateConfig, dateConfigMap, Theme, Themes, 
+  DateConfig, dateConfigMap, Theme, Themes,
 } from '../types';
 
 export const isTouchEvent = <T extends HTMLElement>(e: React.TouchEvent<T> | React.MouseEvent<T>): e is React.TouchEvent<T> => {
@@ -9,7 +9,14 @@ export const isTouchEvent = <T extends HTMLElement>(e: React.TouchEvent<T> | Rea
   return !!(e.targetTouches[0]);
 };
 
-export const isFunction = (val: unknown): val is Function => !!val && Object.prototype.toString.apply(val)  === '[object Function]';
+export const isWheelEvent = <T extends HTMLElement>(e: React.TouchEvent<T> | React.MouseEvent<T> | React.WheelEvent<T>): e is React.WheelEvent<T> => {
+  if (!('deltaY' in e)) {
+    return false;
+  }
+  return true
+};
+
+export const isFunction = (val: unknown): val is Function => !!val && Object.prototype.toString.apply(val) === '[object Function]';
 
 export const isDateConfigKey = (val: unknown): val is keyof typeof dateConfigMap => typeof val === 'string' && dateConfigMap.hasOwnProperty(val);
 

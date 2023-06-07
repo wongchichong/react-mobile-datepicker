@@ -68,6 +68,6 @@ const App = () => {
   );
 }
 
-export default 
+export default
 
-ReactDOM.render(<App />, document.getElementById('react-box'));
+  ReactDOM.render(<App />, document.getElementById('react-box'));
