@@ -1,10 +1,10 @@
-const path = require('path');
-const webpack = require('webpack');
-const TerserPlugin = require('terser-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require('path')
+const webpack = require('webpack')
+const TerserPlugin = require('terser-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
-const LIB_DIR = path.resolve(__dirname, 'lib');
-const BUILD_DIR = path.resolve(__dirname, 'dist');
+const LIB_DIR = path.resolve(__dirname, 'lib')
+const BUILD_DIR = path.resolve(__dirname, 'dist')
 
 module.exports = {
   mode: 'production',
@@ -61,7 +61,7 @@ module.exports = {
     }),
   ],
   optimization: {
-    minimize: true,
+    minimize: false,
     minimizer: [
       new TerserPlugin({
         minify: TerserPlugin.uglifyJsMinify,
@@ -69,4 +69,4 @@ module.exports = {
       }),
     ],
   }
-};
+}

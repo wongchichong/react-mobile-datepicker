@@ -41,7 +41,7 @@ type ModalDatePickerProps = EnhanceDatePickerProps & DatePickerProps & {
   isPopup?: boolean,
 };
 
-const ModalDatePicker: React.FC<ModalDatePickerProps> = ({ isPopup = true, isOpen = false, ...props }) => {
+const ModalDatePicker = ({ isPopup = true, isOpen = false, ...props }: ModalDatePickerProps) => {
   if (!isPopup) {
     return <DatePicker {...props} />;
   }

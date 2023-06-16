@@ -155,7 +155,7 @@ const DatePickerItem: FC<Props> = ({
     const direction = dir > 0 ? Direction.DOWN : Direction.UP;
 
     const date = dates[MIDDLE_INDEX];
-    console.log(nextTouchY, date);
+
     if (date.getTime() < min.getTime() || date.getTime() > max.getTime()) {
       return;
     }
@@ -225,8 +225,7 @@ const DatePickerItem: FC<Props> = ({
         moveToNext(Direction.DOWN);
       // moveTo(e.deltaY < 0 ? --currentIndex.current : ++currentIndex.current, true);
       // return;
-    }
-    else {
+    } else {
       handleContentMouseDown(e);
       handleMove(e);
       handleContentMouseUp(e as any);

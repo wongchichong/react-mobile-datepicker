@@ -1,5 +1,5 @@
 {
   "editor.tabSize": 2,
-  "typescript.format.semicolons": "ignore",
+  "typescript.format.semicolons": "insert",
   "javascript.format.semicolons": "ignore"
 }
