@@ -1,77 +1,42 @@
 {
-  "name": "react-mobile-datepicker-ts",
-  "version": "1.0.0",
-  "types": "dist",
-  "description": "react based date picker like native",
-  "module": "dist/index.js",
-  "main": "dist/index.js",
-  "files": [
-    "dist/*",
-    "dist/**/*"
-  ],
-  "amdName": "reactMobileDatePickerTs",
-  "repository": "jin60641/react-mobile-datepicker",
-  "homepage": "https://github.com/jin60641/react-mobile-datepicker#readme",
-  "keywords": [
-    "react-component",
-    "react-datepicker",
-    "date",
-    "datepicker",
-    "react",
-    "mobile",
-    "calendar"
-  ],
-  "scripts": {
-    "clean": "rm -rf dist/",
-    "build": "npm run clean && npm run transpile && npm run size",
-    "transpile": "webpack --config ./webpack.build.config.js",
-    "size": "size=$(gzip-size $npm_package_main) && echo \"gzip size: $size\"",
-    "lint": "eslint -c .eslintrc.js '{lib,examples}/**/*.{ts,tsx}'",
-    "start": "webpack serve"
-  },
-  "author": "rainie",
-  "dependencies": {},
-  "devDependencies": {
-    "@babel/core": "^7.18.6",
-    "@babel/preset-env": "^7.18.6",
-    "@babel/preset-react": "^7.18.6",
-    "@babel/preset-typescript": "^7.18.6",
-    "@types/node": "^17.0.22",
-    "@types/react": "16.14.0",
-    "@types/react-dom": "^16.9.16",
-    "@typescript-eslint/eslint-plugin": "^5.30.0",
-    "@typescript-eslint/parser": "^5.30.0",
-    "autoprefixer": "^10.4.7",
-    "babel-loader": "^8.2.5",
-    "css-loader": "^6.7.1",
-    "eslint": "^8.18.0",
-    "eslint-config-airbnb-typescript": "^17.0.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-react": "^7.30.1",
-    "gzip-size-cli": "^2.1.0",
-    "html-webpack-plugin": "^5.5.0",
-    "mini-css-extract-plugin": "^2.6.1",
-    "postcss": "^8.4.14",
-    "postcss-custom-properties": "^12.1.8",
-    "postcss-flexbugs-fixes": "^5.0.2",
-    "postcss-import": "^14.1.0",
-    "postcss-loader": "^7.0.0",
-    "postcss-nested": "^5.0.6",
-    "style-loader": "^3.3.1",
-    "styled-loader": "^0.0.0",
-    "terser-webpack-plugin": "^5.3.3",
-    "ts-loader": "^9.3.1",
-    "tslib": "^2.4.0",
-    "typescript": "^4.7.4",
-    "uglify-js": "^3.16.2",
-    "webpack": "^5.73.0",
-    "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.9.2",
-    "webpack-node-externals": "^3.0.0"
-  },
-  "peerDependencies": {
-    "react": "^16",
-    "react-dom": "^16"
-  },
-  "license": "MIT"
+    "name": "voby-mobile-datepicker",
+    "version": "1.0.0",
+    "types": "dist",
+    "description": "voby based date picker like native",
+    "module": "dist/index.js",
+    "main": "dist/index.js",
+    "files": [
+        "dist/*",
+        "dist/**/*"
+    ],
+    "amdName": "vobyMobileDatePickerTs",
+    "repository": "wongchichong/voby-mobile-datepicker",
+    "homepage": "https://github.com/wongchichong/voby-mobile-datepicker#readme",
+    "keywords": [
+        "date",
+        "datepicker",
+        "mobile",
+        "calendar"
+    ],
+    "scripts": {
+        "clean": "rm -rf dist/",
+        "build": "vite build",
+        "scss": "scss",
+        "start": "vite --force --mode dev --host --config vite.config.web.ts",
+        "build1": "npm run clean && npm run transpile && npm run size",
+        "transpile//": "webpack --config ./webpack.build.config.js",
+        "size": "size=$(gzip-size $npm_package_main) && echo \"gzip size: $size\""
+    },
+    "author": "rainie",
+    "devDependencies": {
+        "vite": "^4.3.3",
+        "vite-plugin-dts": "^2.3.0",
+        "vite-plugin-sass-dts": "^1.3.4",
+        "vite-plugin-static-copy": "^0.13.1",
+        "scss": "^0.2.4"
+    },
+    "dependencies": {
+        "voby": "workspace:../woby"
+    },
+    "license": "MIT"
 }

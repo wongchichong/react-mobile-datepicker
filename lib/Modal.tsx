@@ -1,22 +1,21 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { Portal } from 'voby'
+import * as React from 'voby'
 
 interface Props {
-  children: React.ReactNode,
-  isOpen: boolean,
+    children: Child,
+    isOpen: boolean,
 }
 
-const Modal: React.FC<Props> = ({ isOpen = false, children }) => {
-  const root = typeof window !== 'undefined' ? document.body as HTMLElement : null;
-  if (!isOpen || !root || !children) {
-    return null;
-  }
-  return ReactDOM.createPortal(
-    <div className='datepicker-modal'>
-      {children}
-    </div>,
-    root,
-  );
-};
+export const Modal = ({ isOpen = false, children }: Props) => {
+    const root = typeof window !== 'undefined' ? document.body as HTMLElement : null
+    if (!isOpen || !root || !children) {
+        return null
+    }
+    return <Portal>
+        <div className='datepicker-modal'>
+            {children}
+        </div>,
+    </Portal>
+}
 
-export default Modal;
+export default Modal
